@@ -1,0 +1,17 @@
+temp <- tempfile()
+fileURL <- "https://d396qusza40orc.cloudfront.net/exdata%2Fdata%2Fhousehold_power_consumption.zip"
+download.file(fileURL, temp)
+data <- read.table(unz(temp, "household_power_consumption.txt"), header=T, sep=';', na.strings="?", colClasses=c("character","character","numeric","numeric","numeric","numeric","numeric","numeric","numeric"))
+unlink(temp)
+plotdata <- data[(data$Date == "1/2/2007") | (data$Date == "2/2/2007"),]
+plotdata$DateTime <- strptime(paste(plotdata$Date, plotdata$Time), "%d/%m/%Y %H:%M:%S")
+par(mfrow = c(2,2))
+plot(plotdata$DateTime, plotdata[,3], type = "l", xlab = " ", ylab = "Global Active Power")
+plot(plotdata$DateTime, plotdata[,5], type = "l", xlab = "datetime", ylab = "Voltage")
+plot(plotdata$DateTime, plotdata[,7], type = "l", xlab = " ", ylab = "Energy sub metering")
+lines(plotdata[,10],plotdata[,8],col="Red")
+lines(plotdata[,10],plotdata[,9],col="Blue")
+legend(x = "topright", legend = c("Sub_metering_1","Sub_metering_2","Sub_metering_3"), col = c("Black","Red","Blue"), lwd = 1, pt.cex = 0.6, cex = 0.6, bty = "n")
+plot(plotdata$DateTime, plotdata[,4], type = "l", xlab = "datetime", ylab = "Global_reactive_power")
+dev.copy(png,file="plot4.png")
+dev.off()
